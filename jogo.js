@@ -8,6 +8,28 @@ const contexto = canvas.getContext('2d')
 
 //telaDeInicio
 
+const telaDeInicio = {
+  sX: 134,
+  sY: 0,
+  w: 174,
+  h: 152,
+  x: canvas.width / 2 - 174 / 2,
+  y: 50,
+  desenha() {
+    contexto.drawImage(
+      sprites,
+      telaDeInicio.sX,
+      telaDeInicio.sY,
+      telaDeInicio.w,
+      telaDeInicio.h,
+      telaDeInicio.x,
+      telaDeInicio.y,
+      telaDeInicio.w,
+      telaDeInicio.h
+    )
+  }
+}
+
 // [Background]
 
 const planoDeFundo = {
@@ -108,15 +130,49 @@ const flappyBird = {
     )
   }
 }
-
+//
+//[telas]
+//
+let TelaAtiva = {}
+function mudaParaTela(novaTela) {
+  TelaAtiva = novaTela
+}
+const Telas = {
+  inicio: {
+    desenha() {
+      planoDeFundo.desenha()
+      chao.desenha()
+      flappyBird.desenha()
+      telaDeInicio.desenha()
+    },
+    click() {
+      mudaParaTela(Telas.Jogo)
+    },
+    atualiza() {}
+  }
+}
+Telas.Jogo = {
+  desenha() {
+    planoDeFundo.desenha()
+    chao.desenha()
+    flappyBird.desenha()
+  },
+  atualiza() {
+    flappyBird.atualiza()
+  }
+}
 function loop() {
   // A sequência que eu coloco as minhas funções imnterfere no que vai aparecer primeiro no jogo
 
+  TelaAtiva.desenha()
+  TelaAtiva.atualiza()
   requestAnimationFrame(loop)
-  planoDeFundo.desenha()
-  chao.desenha()
-  flappyBird.desenha()
-  flappyBird.atualiza()
 }
 
+window.addEventListener('click', function () {
+  if (TelaAtiva.click) {
+    TelaAtiva.click()
+  }
+})
+mudaParaTela(Telas.inicio)
 loop()
